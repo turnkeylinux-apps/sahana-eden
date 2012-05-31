@@ -1,0 +1,14 @@
+#!/bin/sh -ex
+
+DB_NAME=eden
+DB_USER=eden
+DB_PASS=$(mcookie)
+
+SRC=/usr/local/src
+W2PROOT=/var/www/web2py
+EDENROOT=$W2PROOT/applications/eden
+
+# remove web2py example apps
+rm -rf $W2PROOT/applications/welcome
+rm -rf $W2PROOT/applications/examples
+
