@@ -25,3 +25,13 @@ sed -i "s|^backend      : TkAgg|backend      : Agg|" /etc/matplotlibrc
 mkdir -p /var/www/.matplotlib
 chown www-data:www-data /var/www/.matplotlib
 
+# unpack eden and create required directories
+tar -zxf $SRC/flavour-eden-*.tar.gz -C $W2PROOT/applications/
+rm $SRC/flavour-eden-*.tar.gz
+mv $W2PROOT/applications/flavour-eden-* $EDENROOT
+
+mkdir -p $EDENROOT/static/cache/chart
+mkdir -p $EDENROOT/uploads/gis_cache
+mkdir -p $EDENROOT/uploads/images
+mkdir -p $EDENROOT/uploads/tracks
+
