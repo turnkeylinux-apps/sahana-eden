@@ -35,3 +35,19 @@ mkdir -p $EDENROOT/uploads/gis_cache
 mkdir -p $EDENROOT/uploads/images
 mkdir -p $EDENROOT/uploads/tracks
 
+# configure eden as default app
+cat >$W2PROOT/routes.py<<EOF
+#!/usr/bin/python
+default_application = 'eden'
+default_controller = 'default'
+default_function = 'index'
+routes_onerror = [
+    ('eden/400', '!'),
+    ('eden/401', '!'),
+    ('eden/*', '/eden/errors/index'),
+    ('*/*', '/eden/errors/index'),
+]
+EOF
+
+chown -R www-data:www-data $W2PROOT
+
