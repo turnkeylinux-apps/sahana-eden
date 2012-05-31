@@ -12,3 +12,11 @@ EDENROOT=$W2PROOT/applications/eden
 rm -rf $W2PROOT/applications/welcome
 rm -rf $W2PROOT/applications/examples
 
+# unpack and install tweepy
+tar -zxf $SRC/tweepy-*.tar.gz -C $SRC
+rm $SRC/tweepy-*.tar.gz
+cd $SRC/tweepy-*
+python setup.py install
+cd /
+rm -rf $SRC/tweepy-*
+
