@@ -61,6 +61,32 @@ MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
 $MYSQL_ADMIN create $DB_NAME
 $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; flush privileges;"
 
+# configure eden db model
+CONF=$EDENROOT/models/000_config.py
+cp $EDENROOT/deployment-templates/models/000_config.py $CONF
+chmod 640 $CONF
+
+sed -i "s|EDITING_CONFIG_FILE.*|EDITING_CONFIG_FILE = True|" $CONF
+sed -i "s|auth.hmac_key.*|auth.hmac_key = \"$(mcookie)\"|" $CONF
+sed -i "s|base.public_url.*|base.public_url = \"http://127.0.0.1\"|" $CONF
+sed -i "s|base.cdn.*|base.cdn = True|" $CONF
+sed -i "s|base.prepopulate.*|base.prepopulate = 0|" $CONF
+
+sed -i "s|database.db_type.*|database.db_type = \"mysql\"|" $CONF
+sed -i "s|database.database.*|database.database = \"$DB_NAME\"|" $CONF
+sed -i "s|database.username.*|database.username = \"$DB_USER\"|" $CONF
+sed -i "s|database.password.*|database.password = \"$DB_PASS\"|" $CONF
+
+# initialize eden and get ready for production
+EDENTOOLS="applications/eden/static/scripts/tools"
+cd $W2PROOT
+su www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
+
+sed -i "s|base.prepopulate.*|base.prepopulate = 1|" $CONF
+sed -i "s|base.migrate.*|base.migrate = False|" $CONF
+
+#su www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/compile.py"
+
 # stop services
 /etc/init.d/mysql stop
 
