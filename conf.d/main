@@ -20,3 +20,8 @@ python setup.py install
 cd /
 rm -rf $SRC/tweepy-*
 
+# setup matplotlib
+sed -i "s|^backend      : TkAgg|backend      : Agg|" /etc/matplotlibrc
+mkdir -p /var/www/.matplotlib
+chown www-data:www-data /var/www/.matplotlib
+
