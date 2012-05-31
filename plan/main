@@ -1,3 +1,13 @@
 #include <turnkey/base>
 #include <turnkey/web2py>
 
+python-lxml
+python-xlwt
+python-xlrd
+python-shapely
+python-imaging
+python-reportlab
+python-matplotlib
+python-dateutil
+python-setuptools
+python-serial
