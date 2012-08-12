@@ -64,6 +64,7 @@ $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost
 # configure eden db model
 CONF=$EDENROOT/models/000_config.py
 cp $EDENROOT/deployment-templates/models/000_config.py $CONF
+chown www-data:www-data $CONF
 chmod 640 $CONF
 
 sed -i "s|EDITING_CONFIG_FILE.*|EDITING_CONFIG_FILE = True|" $CONF
