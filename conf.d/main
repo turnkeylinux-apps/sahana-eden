@@ -25,11 +25,7 @@ sed -i "s|^backend      : TkAgg|backend      : Agg|" /etc/matplotlibrc
 mkdir -p /var/www/.matplotlib
 chown www-data:www-data /var/www/.matplotlib
 
-# unpack eden and create required directories
-tar -zxf $SRC/flavour-eden-*.tar.gz -C $W2PROOT/applications/
-rm $SRC/flavour-eden-*.tar.gz
-mv $W2PROOT/applications/flavour-eden-* $EDENROOT
-
+# create required directories for eden
 mkdir -p $EDENROOT/static/cache/chart
 mkdir -p $EDENROOT/uploads/gis_cache
 mkdir -p $EDENROOT/uploads/images
@@ -63,7 +59,7 @@ $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost
 
 # configure eden db model
 CONF=$EDENROOT/models/000_config.py
-cp $EDENROOT/deployment-templates/models/000_config.py $CONF
+cp $EDENROOT/private/templates/000_config.py $CONF
 chown www-data:www-data $CONF
 chmod 640 $CONF
 
