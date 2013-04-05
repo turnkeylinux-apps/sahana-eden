@@ -1,3 +1,22 @@
+turnkey-sahana-eden-12.1 (1) turnkey; urgency=low
+
+  * Latest version of Sahana-Eden will be installed at build time (via git).
+
+  * Web2py related:
+
+    - Latest version of Web2py will be installed at build time.
+    - Disabled git import due to turnkey-pylib conflict:
+      admin/controllers/default.py
+
+  * Hardcoded component versions:
+
+    tweepy              1.4
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Alon Swartz <alon@turnkeylinux.org>  Fri, 05 Apr 2013 08:00:00 +0200
+
 turnkey-sahana-eden-12.0 (1) turnkey; urgency=low
 
   * Initial public release of TurnKey Sahana Eden, based on TKLPatch submitted
