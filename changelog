@@ -8,7 +8,7 @@ turnkey-sahana-eden-12.1 (1) turnkey; urgency=low
     - Disabled git import due to turnkey-pylib conflict:
       admin/controllers/default.py
 
-  * Hardcoded component versions:
+  * Upstream source component versions:
 
     tweepy              1.4
 
