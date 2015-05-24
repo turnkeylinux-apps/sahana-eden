@@ -1,3 +1,19 @@
+turnkey-sahana-eden-14.0 (1) turnkey; urgency=low
+
+  * Sahana-Eden:
+
+    - Latest upstream version of Sahana-Eden.
+
+  * Web2py:
+  
+    - Latest upstream version of Web2py.
+    - Updated install script to reflect changes in recent versions of Eden.
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Anton Pyrogovskyi <q@dae.pp.ua>  Sun, 24 May 2015 20:24:37 +0300
+
 turnkey-sahana-eden-13.0 (1) turnkey; urgency=low
 
   * Sahana-Eden:
