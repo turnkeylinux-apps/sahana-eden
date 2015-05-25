@@ -40,6 +40,7 @@ default_function = 'index'
 routes_onerror = [
     ('eden/400', '!'),
     ('eden/401', '!'),
+    ('eden/509', '!'),
     ('eden/*', '/eden/errors/index'),
     ('*/*', '/eden/errors/index'),
 ]
@@ -59,7 +60,7 @@ $MYSQL_BATCH --execute "grant all privileges on $DB_NAME.* to $DB_USER@localhost
 
 # configure eden db model
 CONF=$EDENROOT/models/000_config.py
-cp $EDENROOT/private/templates/000_config.py $CONF
+cp $EDENROOT/modules/templates/000_config.py $CONF
 chown www-data:www-data $CONF
 chmod 640 $CONF
 
@@ -69,20 +70,20 @@ sed -i "s|base.public_url.*|base.public_url = \"http://127.0.0.1\"|" $CONF
 sed -i "s|base.cdn.*|base.cdn = True|" $CONF
 sed -i "s|base.prepopulate.*|base.prepopulate = 0|" $CONF
 
-sed -i "s|database.db_type.*|database.db_type = \"mysql\"|" $CONF
-sed -i "s|database.database.*|database.database = \"$DB_NAME\"|" $CONF
-sed -i "s|database.username.*|database.username = \"$DB_USER\"|" $CONF
-sed -i "s|database.password.*|database.password = \"$DB_PASS\"|" $CONF
+sed -i "s|#\\(settings.database.db_type\\).*|\\1 = \"mysql\"|" $CONF
+sed -i "s|#\\(settings.database.database\\).*|\\1 = \"$DB_NAME\"|" $CONF
+sed -i "s|#\\(settings.database.username\\).*|\\1 = \"$DB_USER\"|" $CONF
+sed -i "s|#\\(settings.database.password\\).*|\\1 = \"$DB_PASS\"|" $CONF
 
 # initialize eden and get ready for production
 EDENTOOLS="applications/eden/static/scripts/tools"
 cd $W2PROOT
-su www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
+su -s /bin/bash www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
 
 sed -i "s|base.prepopulate.*|base.prepopulate = 1|" $CONF
 sed -i "s|base.migrate.*|base.migrate = False|" $CONF
 
-#su www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/compile.py"
+#su -s /bin/bash www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/compile.py"
 
 # stop services
 /etc/init.d/mysql stop
