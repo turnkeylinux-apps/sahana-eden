@@ -32,4 +32,4 @@ Credentials *(passwords set at first boot)*
 
 
 .. _Sahana Eden: http://sahanafoundation.org/products/eden/
-.. _TurnKey Core: http://www.turnkeylinux.org/core
+.. _TurnKey Core: https://www.turnkeylinux.org/core
