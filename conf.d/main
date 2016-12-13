@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 DB_NAME=eden
 DB_USER=eden

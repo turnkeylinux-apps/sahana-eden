@@ -6,7 +6,7 @@ W2PROOT=/var/www/web2py
 EDENROOT=$W2PROOT/applications/eden
 
 EDEN_URL="https://github.com/flavour/eden.git"
-TWEEPY_URL="http://tweepy.googlecode.com/files/tweepy-1.4.tar.gz"
+TWEEPY_URL="https://github.com/tweepy/tweepy/archive/1.9.tar.gz"
 
 # download eden
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
@@ -15,5 +15,5 @@ unset HTTP_PROXY
 
 # download tweepy
 [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
-cd $SRC; curl -L -f -O $PROXY $TWEEPY_URL; cd -
+cd $SRC; curl -L -f -O $PROXY $TWEEPY_URL; mv $SRC/1.9.tar.gz $SRC/tweepy-1.9.tar.gz; cd -
 
