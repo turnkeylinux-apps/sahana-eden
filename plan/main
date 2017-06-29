@@ -11,3 +11,4 @@ python-matplotlib
 python-dateutil
 python-setuptools
 python-serial
+python-tweepy

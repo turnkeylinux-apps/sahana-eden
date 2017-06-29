@@ -12,14 +12,6 @@ EDENROOT=$W2PROOT/applications/eden
 rm -rf $W2PROOT/applications/welcome
 rm -rf $W2PROOT/applications/examples
 
-# unpack and install tweepy
-tar -zxf $SRC/tweepy-*.tar.gz -C $SRC
-rm $SRC/tweepy-*.tar.gz
-cd $SRC/tweepy-*
-python setup.py install
-cd /
-rm -rf $SRC/tweepy-*
-
 # setup matplotlib
 sed -i "s|^backend      : TkAgg|backend      : Agg|" /etc/matplotlibrc
 mkdir -p /var/www/.matplotlib
@@ -82,8 +74,6 @@ su -s /bin/bash www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
 
 sed -i "s|base.prepopulate.*|base.prepopulate = 1|" $CONF
 sed -i "s|base.migrate.*|base.migrate = False|" $CONF
-
-#su -s /bin/bash www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/compile.py"
 
 # stop services
 /etc/init.d/mysql stop

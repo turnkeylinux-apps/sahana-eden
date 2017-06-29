@@ -12,8 +12,3 @@ TWEEPY_URL="https://github.com/tweepy/tweepy/archive/1.9.tar.gz"
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
 git clone $EDEN_URL $EDENROOT
 unset HTTP_PROXY
-
-# download tweepy
-[ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
-cd $SRC; curl -L -f -O $PROXY $TWEEPY_URL; mv $SRC/1.9.tar.gz $SRC/tweepy-1.9.tar.gz; cd -
-
