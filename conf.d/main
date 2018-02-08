@@ -4,6 +4,11 @@ DB_NAME=eden
 DB_USER=eden
 DB_PASS=$(mcookie)
 
+ADMIN_USERNAME=eden
+ADMIN_PASSWORD=turnkey1
+ADMIN_MAIL=turnkey1
+
+
 SRC=/usr/local/src
 W2PROOT=/var/www/web2py
 EDENROOT=$W2PROOT/applications/eden
@@ -71,6 +76,10 @@ sed -i "s|#\\(settings.database.password\\).*|\\1 = \"$DB_PASS\"|" $CONF
 EDENTOOLS="applications/eden/static/scripts/tools"
 cd $W2PROOT
 su -s /bin/bash www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
+# create sahana eden admin user
+echo "db.auth_user.insert(first_name='Sahana-Eden', last_name='Admin', email='$ADMIN_EMAIL', password='$ADMIN_PASSWORD', username='$ADMIN_USERNAME', language='en'); db.commit();" | python web2py.py -S eden -M -P
+# authenticate this admin user
+echo "auth.s3_approve_user(db.auth_user(id=1)); db.commit()" | python web2py.py -S eden -M -P
 
 sed -i "s|base.prepopulate.*|base.prepopulate = 1|" $CONF
 sed -i "s|base.migrate.*|base.migrate = False|" $CONF
