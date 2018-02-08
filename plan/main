@@ -12,3 +12,9 @@ python-dateutil
 python-setuptools
 python-serial
 python-tweepy
+python-yaml
+python-pyth
+python-selenium
+
+gdal-bin
+

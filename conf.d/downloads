@@ -8,5 +8,5 @@ EDEN_URL="https://github.com/sahana/eden.git"
 
 # download eden
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
-git clone $EDEN_URL $EDENROOT
+git clone $EDEN_URL $EDENROOT --depth=1
 unset HTTP_PROXY
