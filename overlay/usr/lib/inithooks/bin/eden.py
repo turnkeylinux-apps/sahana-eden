@@ -1,11 +1,9 @@
 #!/usr/bin/python
-"""Set OpenCart admin password, email and domain to serve
+"""Set Sahana Eden admin email and password
 
 Option:
     --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
-    --domain=   unless provided, will ask interactively
-        DEFAULT="https://www.example.com"
 """
 
 import os
@@ -17,9 +15,8 @@ import time
 import hashlib
 
 from dialog_wrapper import Dialog
-from mysqlconf import MySQL
 from executil import system
-from random import randint
+
 
 def usage(s=None):
     if s:
@@ -27,7 +24,6 @@ def usage(s=None):
     print >> sys.stderr, "Syntax: %s [options]" % sys.argv[0]
     print >> sys.stderr, __doc__
     sys.exit(1)
-
 
 
 def main():
@@ -68,6 +64,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
