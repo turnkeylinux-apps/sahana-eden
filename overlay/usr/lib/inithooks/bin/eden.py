@@ -59,7 +59,11 @@ def main():
             "admin@example.com")
     inithooks_cache.write('APP_EMAIL', email)
 
-    update_script = "db(db.auth_user.id == 1).update(email=\"%s\",password=db.auth_user.password.validate(\"%s\")[0]);db.commit();" % (email, password)
+    if email == 'admin@example.com'
+        update_script = "db(db.auth_user.id == 1).update(password=db.auth_user.password.validate(\"%s\")[0]);db.commit();" % (password)
+    else:
+        update_script = "db(db.auth_user.id == 1).update(email=\"%s\",password=db.auth_user.password.validate(\"%s\")[0]);db.commit();" % (email, password)
+ 
     system("cd /var/www/web2py && echo '%s' | python web2py.py -S eden -M -P" % update_script)
 
 if __name__ == "__main__":
