@@ -1,5 +1,7 @@
 turnkey-sahana-eden-15.1 (1) turnkey; urgency=low
 
+  * Installed lastest stable version of Sahana-Eden via git.
+
   * Rebuild to resolve inadvertent removal of mariadb during sec-updates
     - part of #1246.
 
