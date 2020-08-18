@@ -5,9 +5,13 @@ python-lxml
 python-xlwt
 python-xlrd
 python-shapely
-python-imaging
+python-pil
+python-pip
+python-wheel
+python-dev
 python-reportlab
 python-matplotlib
+python-matplotlib-data
 python-dateutil
 python-setuptools
 python-serial
@@ -17,4 +21,6 @@ python-pyth
 python-selenium
 
 gdal-bin
-
+libgeos-dev
+libgeos-c1v5
+libodbc1
