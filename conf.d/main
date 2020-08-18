@@ -8,10 +8,14 @@ ADMIN_USERNAME=eden
 ADMIN_PASSWORD=turnkey1
 ADMIN_MAIL=turnkey1
 
-
 SRC=/usr/local/src
 W2PROOT=/var/www/web2py
 EDENROOT=$W2PROOT/applications/eden
+
+# checkout specific required commit ID of web2py
+cd $W2PROOT
+git reset --hard 59700b8
+git submodule update --init --recursive || true
 
 # remove web2py example apps
 rm -rf $W2PROOT/applications/welcome
