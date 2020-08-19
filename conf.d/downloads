@@ -4,7 +4,7 @@
 SRC=/usr/local/src
 W2PROOT=/var/www/web2py
 EDENROOT=$W2PROOT/applications/eden
-EDEN_URL="https://github.com/sahana/eden.git"
+EDEN_URL="https://github.com/sahana/eden-stable.git"
 
 # download eden
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
