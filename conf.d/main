@@ -79,7 +79,7 @@ sed -i "s|#\\(settings.database.password\\).*|\\1 = \"$DB_PASS\"|" $CONF
 # initialize eden and get ready for production
 EDENTOOLS="applications/eden/static/scripts/tools"
 cd $W2PROOT
-su -s /bin/bash www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
+su www-data -s /bin/bash -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
 # create sahana eden admin user
 echo "db.auth_user.insert(first_name='Sahana-Eden', last_name='Admin', email='$ADMIN_EMAIL', password='$ADMIN_PASSWORD', username='$ADMIN_USERNAME', language='en'); db.commit();" | python web2py.py -S eden -M -P
 # authenticate this admin user
