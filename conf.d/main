@@ -6,31 +6,56 @@ DB_PASS=$(mcookie)
 
 ADMIN_USERNAME=eden
 ADMIN_PASSWORD=turnkey1
-ADMIN_MAIL=turnkey1
-
+ADMIN_EMAIL=admin@example.com
 
 SRC=/usr/local/src
 W2PROOT=/var/www/web2py
 EDENROOT=$W2PROOT/applications/eden
+USER=www-data
+
+# set Web2py to use python3
+turnkey-web2py-pyver py3
+
+# remove redundant pkgs
+apt-get purge --autoremove python-mysqldb -y
+
+# remove python venv (only need python3 for sahan-eden)
+rm -r $W2PROOT/venv*
+# comment out venv activation in wsgi
+sed -i "\|activate_this|s|^|#|" $W2PROOT/wsgihandler.py
+
+# install additional dependencies via pip
+pip3 install pyth sgmllib3k google-api-python-client
+
+# checkout specific required commit ID of web2py
+cd $W2PROOT
+git reset --hard 59700b8
+git submodule update --init --recursive || true
 
 # remove web2py example apps
 rm -rf $W2PROOT/applications/welcome
 rm -rf $W2PROOT/applications/examples
 
-# setup matplotlib
-sed -i "s|^backend      : TkAgg|backend      : Agg|" /etc/matplotlibrc
-mkdir -p /var/www/.matplotlib
-chown www-data:www-data /var/www/.matplotlib
+# patch 2.18.5 as per eden reqs - patch downloaded in conf.d/downloads
+cd $W2PROOT/gluon
+patch -p0 < $SRC/scheduler.diff
+rm $SRC/scheduler.diff
+sed -i "s|if getattr(func, 'validate', None) is Validator.validate:|if getattr(func, 'validate', None) is not Validator.validate:|" $W2PROOT/gluon/packages/dal/pydal/validators.py
+sed -i "s|\['password'\]|['passwd']|" $W2PROOT/gluon/packages/dal/pydal/adapters/mysql.py
+
+# setup matplotlib as per Sahana-Eden recommendations
+mkdir -p $W2PROOT/.matplotlib
+echo "os.environ['MPLCONFIGDIR'] = '$W2PROOT/.matplotlib'" >> $W2PROOT/wsgihandler.py
+sed -i 's|TkAgg|Agg|' /etc/matplotlibrc
 
 # create required directories for eden
+mkdir -p $EDENROOT/{databases,sessions}
 mkdir -p $EDENROOT/static/cache/chart
-mkdir -p $EDENROOT/uploads/gis_cache
-mkdir -p $EDENROOT/uploads/images
-mkdir -p $EDENROOT/uploads/tracks
+mkdir -p $EDENROOT/uploads/{gis_cache,images,tracks}
 
 # configure eden as default app
 cat >$W2PROOT/routes.py<<EOF
-#!/usr/bin/python
+#!/usr/bin/python3
 default_application = 'eden'
 default_controller = 'default'
 default_function = 'index'
@@ -43,12 +68,10 @@ routes_onerror = [
 ]
 EOF
 
-chown -R www-data:www-data $W2PROOT
 
-# start services
-/etc/init.d/mysql start
+# setup db
+service mysql start
 
-# setup the database
 MYSQL_BATCH="mysql --user=root --password=$MYSQL_PASS --batch"
 MYSQL_ADMIN="mysqladmin --user=root --password=$MYSQL_PASS"
 
@@ -61,29 +84,40 @@ cp $EDENROOT/modules/templates/000_config.py $CONF
 chown www-data:www-data $CONF
 chmod 640 $CONF
 
-sed -i "s|EDITING_CONFIG_FILE.*|EDITING_CONFIG_FILE = True|" $CONF
-sed -i "s|auth.hmac_key.*|auth.hmac_key = \"$(mcookie)\"|" $CONF
-sed -i "s|base.public_url.*|base.public_url = \"http://127.0.0.1\"|" $CONF
-sed -i "s|base.cdn.*|base.cdn = True|" $CONF
-sed -i "s|base.prepopulate.*|base.prepopulate = 0|" $CONF
+modify_conf() {
+    sed -i "\|$1|s|^#||" $CONF
+    [[ -z "$2" ]] || sed -i "\|$1|s|=.*|= $2|" $CONF
+}
 
-sed -i "s|#\\(settings.database.db_type\\).*|\\1 = \"mysql\"|" $CONF
-sed -i "s|#\\(settings.database.database\\).*|\\1 = \"$DB_NAME\"|" $CONF
-sed -i "s|#\\(settings.database.username\\).*|\\1 = \"$DB_USER\"|" $CONF
-sed -i "s|#\\(settings.database.password\\).*|\\1 = \"$DB_PASS\"|" $CONF
+# initial config
+sed -i "s|EDITING_CONFIG_FILE.*|EDITING_CONFIG_FILE = True|" $CONF
+modify_conf "database.db_type = \"mysql\""
+modify_conf "database.database =" "'$DB_NAME'"
+modify_conf "database.username =" "'$DB_USER'"
+modify_conf "database.password =" "'$DB_PASS'"
+modify_conf "auth.hmac_key =" "'$(mcookie)'"
+modify_conf "base.public_url =" "'http://127.0.0.1'"
 
 # initialize eden and get ready for production
 EDENTOOLS="applications/eden/static/scripts/tools"
 cd $W2PROOT
-su -s /bin/bash www-data -c "python web2py.py -S eden -M -R $EDENTOOLS/noop.py"
+# Remove buggy pyc file
+rm gluon/contrib/plural_rules/fa.pyc
+python3 web2py.py -S eden -M -R $EDENTOOLS/noop.py
+python3 web2py.py -S eden -M -R $EDENTOOLS/compile.py
 # create sahana eden admin user
-echo "db.auth_user.insert(first_name='Sahana-Eden', last_name='Admin', email='$ADMIN_EMAIL', password='$ADMIN_PASSWORD', username='$ADMIN_USERNAME', language='en'); db.commit();" | python web2py.py -S eden -M -P
+COMMAND="db.auth_user.insert(first_name='Sahana-Eden', last_name='Admin', email='$ADMIN_EMAIL', password='$ADMIN_PASSWORD', username='$ADMIN_USERNAME', language='en'); db.commit();"
+echo "$COMMAND" | python3 web2py.py -S eden -M -P
 # authenticate this admin user
-echo "auth.s3_approve_user(db.auth_user(id=1)); db.commit()" | python web2py.py -S eden -M -P
+echo "auth.s3_approve_user(db.auth_user(id=1)); db.commit()" | python3 web2py.py -S eden -M -P
 
-sed -i "s|base.prepopulate.*|base.prepopulate = 1|" $CONF
-sed -i "s|base.migrate.*|base.migrate = False|" $CONF
+# finalise config
+modify_conf "base.cdn ="
+modify_conf "base.prepopulate =" 1
+modify_conf "base.migrate =" False
+
+chown -R $USER:$USER $W2PROOT
 
 # stop services
-/etc/init.d/mysql stop
-
+service mysql stop
+service apache2 stop
