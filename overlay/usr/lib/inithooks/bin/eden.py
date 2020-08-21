@@ -35,7 +35,6 @@ def main():
 
     password = ""
     email = ""
-    domain = ""
     for opt, val in opts:
         if opt in ('-h', '--help'):
             usage()
@@ -60,8 +59,7 @@ def main():
     inithooks_cache.write('APP_EMAIL', email)
 
     update_script = 'db(db.auth_user.id == 1).update(email="%s",password=db.auth_user.password.validate("%s")[0]);db.commit();' % (email, password)
-    subprocess.run(["python", "web2py.py", "-S", "eden", "-M", "-P"], cwd='/var/www/web2py', input=update_script.encode('utf-8'))
+    subprocess.run(["python3", "web2py.py", "-S", "eden", "-M", "-P"], cwd='/var/www/web2py', input=update_script.encode('utf-8'))
 
 if __name__ == "__main__":
     main()
-
