@@ -28,8 +28,11 @@ sed -i "\|activate_this|s|^|#|" $W2PROOT/wsgihandler.py
 pip3 install pyth sgmllib3k google-api-python-client
 
 # checkout specific required commit ID of web2py
+# Current update comes from:
+# https://github.com/nursix/eden_deploy_manual/blob/716dcf49ed0d1d927722b77b888cb215770caf2c/install-eden-apache-mysql.sh#L171-L172
 cd $W2PROOT
-git reset --hard 59700b8
+# Web2py v2.21.1
+git reset --hard 6da8479
 git submodule update --init --recursive || true
 
 # remove web2py example apps
