@@ -27,6 +27,18 @@ sed -i "\|activate_this|s|^|#|" $W2PROOT/wsgihandler.py
 # install additional dependencies via pip
 pip3 install pyth sgmllib3k google-api-python-client
 
+# Tweak wsgi conf as recommended by sahana-eden (as per Sahana-Eden recommendations)
+# Enable Basic Authentication for WebServices
+sed -i 's|</IfModule>|WSGIPassAuthorization On|' /etc/apache2/mods-enabled/wsgi.conf
+echo "</IfModule>" >> /etc/apache2/mods-enabled/wsgi.conf
+
+# Prevent Memory leaks from killing servers (as per Sahana-Eden recommendations)
+sed -i 's|MaxRequestsPerChild   0|MaxRequestsPerChild 300|' /etc/apache2/apache2.conf
+
+# Tune for smaller RAM setups (as per Sahana-Eden recommendations)
+sed -i 's|MinSpareServers       5|MinSpareServers 3|' /etc/apache2/apache2.conf
+sed -i 's|MaxSpareServers      10|MaxSpareServers 6|' /etc/apache2/apache2.conf
+
 # checkout specific required commit ID of web2py
 # Current update comes from:
 # https://github.com/nursix/eden_deploy_manual/blob/716dcf49ed0d1d927722b77b888cb215770caf2c/install-eden-apache-mysql.sh#L171-L172
@@ -35,16 +47,8 @@ cd $W2PROOT
 git reset --hard 6da8479
 git submodule update --init --recursive || true
 
-# remove web2py example apps
-rm -rf $W2PROOT/applications/welcome
+# remove web2py examples
 rm -rf $W2PROOT/applications/examples
-
-# patch 2.18.5 as per eden reqs - patch downloaded in conf.d/downloads
-cd $W2PROOT/gluon
-patch -p0 < $SRC/scheduler.diff
-rm $SRC/scheduler.diff
-sed -i "s|if getattr(func, 'validate', None) is Validator.validate:|if getattr(func, 'validate', None) is not Validator.validate:|" $W2PROOT/gluon/packages/dal/pydal/validators.py
-sed -i "s|\['password'\]|['passwd']|" $W2PROOT/gluon/packages/dal/pydal/adapters/mysql.py
 
 # setup matplotlib as per Sahana-Eden recommendations
 mkdir -p $W2PROOT/.matplotlib
@@ -113,6 +117,11 @@ python3 web2py.py -S eden -M -R $EDENTOOLS/compile.py
 modify_conf "base.prepopulate =" 1
 modify_conf "base.migrate =" False
 chown -R $USER:$USER $W2PROOT
+
+a2enmod rewrite
+a2enmod deflate
+a2enmod headers
+a2enmod expires
 
 # stop services
 service mysql stop
