@@ -14,7 +14,3 @@ EDEN_URL="https://github.com/sahana/eden-stable.git"
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
 git clone $EDEN_URL $EDENROOT --depth=1
 unset HTTP_PROXY
-
-# download web2py patch - TBH not sure if this is needed, but seems to work...
-PATCH_URL=http://eden.sahanafoundation.org/downloads/scheduler.diff
-dl $PATCH_URL $SRC
