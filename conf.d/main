@@ -13,9 +13,6 @@ W2PROOT=/var/www/web2py
 EDENROOT=$W2PROOT/applications/eden
 USER=www-data
 
-# set Web2py to use python3
-turnkey-web2py-pyver py3
-
 # remove redundant pkgs
 apt-get purge --autoremove python-mysqldb -y
 
@@ -106,8 +103,6 @@ modify_conf "base.public_url =" "'http://127.0.0.1'"
 EDENTOOLS="applications/eden/static/scripts/tools"
 cd $W2PROOT
 
-# Remove buggy pyc file
-rm gluon/contrib/plural_rules/fa.pyc
 python3 web2py.py -S eden -M -R $EDENTOOLS/noop.py
 python3 web2py.py -S eden -M -R $EDENTOOLS/compile.py
 
@@ -120,7 +115,6 @@ chown -R $USER:$USER $W2PROOT
 
 a2enmod rewrite
 a2enmod deflate
-a2enmod headers
 a2enmod expires
 
 # stop services
