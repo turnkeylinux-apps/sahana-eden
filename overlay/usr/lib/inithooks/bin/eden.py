@@ -10,12 +10,12 @@ import os
 import re
 import sys
 import getopt
-import inithooks_cache
+from libinithooks import inithooks_cache
 import time
 import hashlib
 import subprocess
 
-from dialog_wrapper import Dialog
+from libinithooks.dialog_wrapper import Dialog
 
 
 def usage(s=None):
